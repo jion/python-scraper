@@ -5,7 +5,7 @@ class AbstractOperation(object):
     Operations are plugins that are attached to the DomBuilder in order to
     procces different kind of analysis over DOM at the time is building and
     when it finished.
-    This is the base to construct the different analysis that the Scrapper
+    This is the base to construct the different analysis that the Scraper
     do on the DOM, and the good thing is that they could do his job on the
     fly (at the same time that dom is being parsed).
 
@@ -13,7 +13,7 @@ class AbstractOperation(object):
     and is the client who need to construct the object with this configuration
     and pass it to the builder.
 
-    Then, the scrapper will call operation attachTo method passing the domBuilder
+    Then, the scraper will call operation attachTo method passing the domBuilder
     in order to let the operation to attach to the needed events on the
     build proccess.
 

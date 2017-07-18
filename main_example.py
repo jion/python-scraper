@@ -3,35 +3,35 @@
 import sys
 sys.path.append('./lib')
 
-from scrapper.operations import CountNumberOfElements, ListOcurrences
-from scrapper.resultprinters import ConsolePrinter
-from scrapper.scrapper import defaultUrlScrapper as Scrapper
+from scraper.operations import CountNumberOfElements, ListOcurrences
+from scraper.resultprinters import ConsolePrinter
+from scraper.scraper import defaultUrlScraper as Scraper
 
 
 url = "http://ordergroove.com/company"
 
 def main():
     """
-    This runs an example petition to the scrapper
+    This runs an example petition to the scraper
     asking for the number of html elements and the
     5 most used tags on the page that is stored in
     global variable "url").
-    Scrapper was made in a way to be extendable by
+    Scraper was made in a way to be extendable by
     Operations, and also the output was decoupled using an abstract
     printer (only consoleOutput was implemented by now)
     """
 
-    # Setting up & Running the Scrapper
-    scrapper = Scrapper(url)
+    # Setting up & Running the Scraper
+    scraper = Scraper(url)
 
-    scrapper.addOperation(CountNumberOfElements())
-    scrapper.addOperation(ListOcurrences(limit=5))
+    scraper.addOperation(CountNumberOfElements())
+    scraper.addOperation(ListOcurrences(limit=5))
 
-    scrapper.run()
+    scraper.run()
 
     # Printing results
     consolePrinter = ConsolePrinter()
-    scrapper.printResults(consolePrinter)
+    scraper.printResults(consolePrinter)
 
 
 if __name__ == '__main__':
