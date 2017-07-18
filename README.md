@@ -25,7 +25,7 @@ That is all.
 # Architecture of this example
 
 I follow a OOP style, doing classes and proper abstractions in order to
-make the application the most extendable I can. Some simplifications were
+make the application the most extendable I could. Some simplifications were
 made to avoid make the code too long, but I tried to use design patterns
 and use loose coupling and high cohesion the best I could.
 Each Class has a single purpose on the system, and collaborates with the
@@ -33,6 +33,43 @@ others to get the simple aim of the test.
 
 The class diagram of my Scraper is the following:
 
+```Missing Image```
+
+The Scraper was built as a library, that you can use inside your own programs
+or use the CLI application in order to made request from the console (but the
+CLI has not written yet.. )
+For this example, I create a `main_example.py` python script on the root that
+prepares and use the library to execute the request required in the test.
+
+## Usage
+The library exposes a builder class (Scraper) thar receives an URL and a list
+of customizable operations to add to the process. This operations are made as
+plugins that do analysis  on the flight during the DOM creation (like calculate
+the total number of elements of a webpage or the most used n tags).
+
+```python
+# Setting up & Running the Scraper
+scraper = Scraper(url)
+
+scraper.addOperation( CountNumberOfElements() )
+scraper.addOperation( ListOcurrences( limit=5 ) )
+```
+
+Once the scrapper is set up, you could run it in order to actually do the
+webpage fetch and the analysis:
+```python
+scraper.run()
+```
+
+Finaly, you could use some of the many scraper-printers available on the Internet to..
+just a joke. But you can create it. I just implemented a ConsolePrinter, that takes
+the result of the Scraper operation and prints it nicely on the console.
+
+```python
+# Printing results
+consolePrinter = ConsolePrinter()
+scraper.printResults(consolePrinter)
+```
 
 # Assumptions:
 
