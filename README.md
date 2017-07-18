@@ -24,22 +24,33 @@ That is all.
 
 # Architecture of this example
 
-I follow a OOP style, doing classes and proper abstractions in order to
+I used a OOP design, creating classes and proper abstractions in order to
 make the application the most extendable I could. Some simplifications were
 made to avoid make the code too long, but I tried to use design patterns
 and use loose coupling and high cohesion the best I could.
 Each Class has a single purpose on the system, and collaborates with the
-others to get the simple aim of the test.
+other classes to get the simple aim of the test.
 
 The class diagram of my Scraper is the following:
 
-```Missing Image```
+![alt text](class_diagram.png "Class Diagram")
+
+The Scrapper class is a builder that orchestrates all the process of get useful
+data from the desired web page.
+It uses a decoupled Reader (is just a function for his simplicity) that takes
+html input from somewhere (from an url in this case) and feeds a parser, that
+I implemented extending the built-in HTMLParser library.
+Then, this parser constructs an internal DOM representation of the page, that
+is also provided for the scraper to the parser, and in the process this dom
+emits events that are captured for several implementations of the Operation
+class (attached to the DOM also by this Scrapper) and used properly to calculate
+some analysis on the fly while the DOM is beign constructing.
 
 The Scraper was built as a library, that you can use inside your own programs
-or use the CLI application in order to made request from the console (but the
-CLI has not written yet.. )
+or write a CLI application that takes orders from the command line.
+
 For this example, I create a `main_example.py` python script on the root that
-prepares and use the library to execute the request required in the test.
+prepares and use the library to execute only the request required in the test.
 
 ## Usage
 The library exposes a builder class (Scraper) thar receives an URL and a list
@@ -48,7 +59,6 @@ plugins that do analysis  on the flight during the DOM creation (like calculate
 the total number of elements of a webpage or the most used n tags).
 
 ```python
-# Setting up & Running the Scraper
 scraper = Scraper(url)
 
 scraper.addOperation( CountNumberOfElements() )
@@ -62,7 +72,7 @@ scraper.run()
 ```
 
 Finaly, you could use some of the many scraper-printers available on the Internet to..
-just a joke. But you can create it. I just implemented a ConsolePrinter, that takes
+just a joke (but you can create it anyway..). I just implemented a ConsolePrinter, that takes
 the result of the Scraper operation and prints it nicely on the console.
 
 ```python
@@ -95,17 +105,17 @@ error we will inmediatly stop the excecution indicating that we can't parse the 
 ## 3. Any Web Page fits in memory
 At first I intended to make the fetching-parsing process asynchronyc. My idea was to
 put a buffer in the middle of the output of the http-reader and the domBuilder, and even
-put each task in his only thread.
+put each task in his own thread.
 This give us two benefits: we don't have to wait for the whole page to be loaded in order
 to start parsing and also we fix a bug: we can't trust the whole page fits in system
-memory (usually does, of course) and read one at once pretending that.
+memory (usually does, of course) and just read all at a glance.
 So, because I was having some troubles doing that works (As a begginer python developer I am)
 I'll assume that we'll don't have a buffer overflow reading syncronically the webpage, and that
 is what I'll do.
 
 ## 4. Test covergage is poor.
-One of my surprises as a begginer in python was the version 2.7 doesn't came charged with a
-mock library to use in our unit test. You need to use Python 3 in order to have urllib.mock
+One of my surprises as a begginer on python programming was the version 2.7 doesn't come charged
+with a mock library to use in our unit test. You need to use Python 3 in order to have urllib.mock
 library available, o download that dependency (that is not allowed in the test statement).
 
 Because the modeling and coding of this example has taken more time I would wish, I just
@@ -113,12 +123,12 @@ include unit test for the operations module, that I think is the core of this ap
 (also, as is evident, I didn't use a BDD/TDD approach, I just create the Test Suite after
 having code working).
 
-# Final Considerations
-Appart from the assumptions described above, I tried to make the code the most decoupled I could.
+# Final Considerations and conclusion
+Apart from the assumptions described above, I tried to make the code the most decoupled I could.
 In some parts I decided to do it in a more "hardcore" fashion for the sake of the example,
 but I tried to explain in comments when that was the case.
-Also, I tried to document all classes (it was not so as I would wish with functions) and
-did some investigation in more pythonic ways to do some parts of the code.
+Also, I tried to document all classes (it was not so as I would wish with methods) and
+did some investigation to refactor in more pythonic ways some parts of the code.
 
 Also I left with some unresolved questions like a proper way to place and execute the test
 (my test case file is just in the same path where the tested module is stored, and I didn't
@@ -129,3 +139,6 @@ As self-critisism, I tried to do this to-much OOP-style and force some patterns 
 places that maybe it adds unnecesary complecity for the purpose of this example.
 This takes me a little bit more time refactoring, for a problem that I almost resolve in a
 sandbox in 15 min (I left the sandbox file just in case you have curiosity)
+Finally, a better error handler is missing. I left that to do after all the "most important"
+things and finally I haven't enough time to make that. I think unit testing is an important
+tool also to discover missing error handling of some parts.
