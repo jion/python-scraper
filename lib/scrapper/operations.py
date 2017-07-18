@@ -1,3 +1,5 @@
+from collections import Counter
+
 class AbstractOperation(object):
     """
     Operations are plugins that are attached to the DomBuilder in order to
@@ -10,9 +12,13 @@ class AbstractOperation(object):
     The initializer receives the specific configuration for the action,
     and is the client who need to construct the object with this configuration
     and pass it to the builder.
-    Then, the builder will call to deploy_phase with a reference of hisself
-    so the operation need to attach to the proper action he want to be aware (if any).
-    Finally, DomBuilder will call finish)phase method when parse be finished.
+
+    Then, the scrapper will call operation attachTo method passing the domBuilder
+    in order to let the operation to attach to the needed events on the
+    build proccess.
+
+    Finally, a resultPrinter could call the getResults function in order to get
+    the result of the operation and output in a useful way.
     """
     def attachTo(self, domBuilder):
         pass
@@ -26,6 +32,9 @@ class AbstractOperation(object):
 
 class CountNumberOfElements(AbstractOperation):
     """
+    Count the number of elements present in DOM.
+    Result of this operation is a number indicating the total number of
+    elements present in DOM.
     """
     def __init__(self):
         self.numberOfElements = None
@@ -43,17 +52,19 @@ class CountNumberOfElements(AbstractOperation):
 
 class ListOcurrences(AbstractOperation):
     """
+    This operation count the number of ocurrences of each tag name present
+    in DOM.
+    It takes optional configuration argument:
+     * limit: specifies the max number of results desired.
+
+    Result of this operation is list of n tuples with the format (tag, ocurrences),
+    ordered from most common to less common.
     """
-    ocurrences = None
-    tagsList = None
-    resultsReady = False
 
-    def __init__(self, sortOrder=None, limit=None):
-        self.sortOrder = sortOrder
+    def __init__(self, limit=None):
         self.limit = limit
-
-        self.ocurrences = {}
         self.tagsList = []
+        self.result = None
 
     def attachTo(self, domBuilder):
         domBuilder.subscribe("NodeAdded", self._handleNodeAdded)
@@ -61,16 +72,10 @@ class ListOcurrences(AbstractOperation):
 
     def _handleNodeAdded(self, eventData):
         tag = eventData['element'][0]
-        if tag in self.ocurrences:
-            self.ocurrences[tag] += 1
-        else:
-            self.ocurrences[tag]  = 1
+        self.tagsList.append(tag)
 
     def _handleParsingFinished(self, eventData):
-        keys = self.ocurrences.keys()
-        self.tagsList = keys
-        if(self.sortOrder != None):
-            self.tagsList = [v[0] for v in sorted(self.ocurrences.iteritems(), key=lambda(k, v): (v, k), reverse=(self.sortOrder == "DESC"))]
+        self.result = Counter(self.tagsList).most_common(self.limit)
 
     def getResults(self):
-        return (self.tagsList, self.ocurrences)
+        return self.result

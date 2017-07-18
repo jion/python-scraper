@@ -25,7 +25,7 @@ def main():
     scrapper = Scrapper(url)
 
     scrapper.addOperation(CountNumberOfElements())
-    scrapper.addOperation(ListOcurrences(sortOrder="DESC", limit=5 ))
+    scrapper.addOperation(ListOcurrences(limit=5))
 
     scrapper.run()
 

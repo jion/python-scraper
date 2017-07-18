@@ -20,7 +20,7 @@ class ConsolePrinter(AbstractPrinter):
     def ListOcurrencesPrinter( self, operation ):
         print "Ocurrences by tag: "
         
-        (tags, ocurrences) = operation.getResults()
-        for tag in tags:
-            print tag, ':', ocurrences[tag]
+        results = operation.getResults()
+        for (tag, ocurrences) in results:
+            print "{:>5}: {:d}".format(tag, ocurrences)
 
