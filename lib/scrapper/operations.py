@@ -4,7 +4,8 @@ class AbstractOperation(object):
     procces different kind of analysis over DOM at the time is building and
     when it finished.
     This is the base to construct the different analysis that the Scrapper
-    do on the DOM, and the good thing is that they could do it on the fly.
+    do on the DOM, and the good thing is that they could do his job on the
+    fly (at the same time that dom is being parsed).
 
     The initializer receives the specific configuration for the action,
     and is the client who need to construct the object with this configuration
@@ -13,10 +14,7 @@ class AbstractOperation(object):
     so the operation need to attach to the proper action he want to be aware (if any).
     Finally, DomBuilder will call finish)phase method when parse be finished.
     """
-    def deploy_phase(self, domBuilder):
-        pass
-
-    def finish_phase(self, dom):
+    def attachTo(self, domBuilder):
         pass
 
     def getResults(self):
@@ -29,16 +27,17 @@ class AbstractOperation(object):
 class CountNumberOfElements(AbstractOperation):
     """
     """
-    numberOfElements = None
+    def __init__(self):
+        self.numberOfElements = None
 
-    def finish_phase(self, dom):
+    def attachTo(self, domBuilder):
+        domBuilder.subscribe("ParsingFinished", self._handleParsingFinished)
+
+    def _handleParsingFinished(self, eventData):
+        dom = eventData['dom']
         self.numberOfElements = len( dom )
-        self.resultsReady = True
 
     def getResults(self):
-        if self.resultsReady == False:
-            raise Exception( "Result is not ready" ) # TODO: Proper error
-
         return self.numberOfElements
         
 
@@ -56,9 +55,9 @@ class ListOcurrences(AbstractOperation):
         self.ocurrences = {}
         self.tagsList = []
 
-    def deploy_phase(self, domBuilder):
-        # Subscribe to proper events
+    def attachTo(self, domBuilder):
         domBuilder.subscribe("NodeAdded", self._handleNodeAdded)
+        domBuilder.subscribe("ParsingFinished", self._handleParsingFinished)
 
     def _handleNodeAdded(self, eventData):
         tag = eventData['element'][0]
@@ -67,16 +66,11 @@ class ListOcurrences(AbstractOperation):
         else:
             self.ocurrences[tag]  = 1
 
-    def finish_phase(self, eventData):
+    def _handleParsingFinished(self, eventData):
         keys = self.ocurrences.keys()
         self.tagsList = keys
         if(self.sortOrder != None):
             self.tagsList = [v[0] for v in sorted(self.ocurrences.iteritems(), key=lambda(k, v): (v, k), reverse=(self.sortOrder == "DESC"))]
 
-        self.resultsReady = True
-
     def getResults(self):
-        if self.resultsReady == False:
-            raise Exception( "Result is not ready" ) # TODO: Proper error
-
         return (self.tagsList, self.ocurrences)

@@ -1,4 +1,9 @@
 class Observable(object):
+    """
+    This class implements the observer design pattern.
+    You just need to inherit from this class to add
+    the ability to the class of be observable.
+    """
     observers= {}
 
     def subscribe(self, action, handler):

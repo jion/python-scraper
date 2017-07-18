@@ -13,31 +13,14 @@ class DomBuilder(Observable, HTMLParser):
     voidTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen",
                 "link", "menuitem", "meta", "param", "source", "track", "wbr"] # const
 
-    ##
-    dom = None
-    actualParent = None
-    ##
-
-    def __init__(self):
+    def __init__(self, dom):
         HTMLParser.__init__(self)
-    #    super(DomBuilder, self).__init__()
 
-    def _finishParsing(self):
-        self._trigger("ParsingFinished", { 'dom': self.dom })
-
-
-    def setInput(self, reader):
-        self.reader = reader
-        return self
-
-    def setOutput(self, dom):
         self.dom = dom
         self.actualParent = [None,]
 
-    def build(self):
-        ###################################
-        self.feed ( self.reader.read() )  #
-        ###################################
+    def _finishParsing(self):
+        self._trigger("ParsingFinished", { 'dom': self.dom })
 
 
     def handle_starttag(self, tag, attrs):
@@ -56,5 +39,5 @@ class DomBuilder(Observable, HTMLParser):
         if self.dom.getNode( actualParent )[0] != tag:
             raise HTMLParser.Error("Closing tag is missing") # TODO: Custom error object. (ParseEror ?)
 
-        if self.actualParent == None:
+        if self.actualParent[-1] == None:
             self._finishParsing()

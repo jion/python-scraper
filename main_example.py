@@ -5,9 +5,7 @@ sys.path.append('./lib')
 
 from scrapper.operations import CountNumberOfElements, ListOcurrences
 from scrapper.resultprinters import ConsolePrinter
-from scrapper.scrapper import Scrapper
-
-from urllib2 import urlopen as URLReader
+from scrapper.scrapper import defaultUrlScrapper as Scrapper
 
 
 url = "http://ordergroove.com/company"
@@ -15,15 +13,16 @@ url = "http://ordergroove.com/company"
 def main():
     """
     This runs an example petition to the scrapper
-    asking for the number of elements in the page (the one that is
-    stored in global variable "url"), and the top 5 tags ocurrences.
+    asking for the number of html elements and the
+    5 most used tags on the page that is stored in
+    global variable "url").
     Scrapper was made in a way to be extendable by
     Operations, and also the output was decoupled using an abstract
     printer (only consoleOutput was implemented by now)
     """
 
     # Setting up & Running the Scrapper
-    scrapper = Scrapper(URLReader(url))
+    scrapper = Scrapper(url)
 
     scrapper.addOperation(CountNumberOfElements())
     scrapper.addOperation(ListOcurrences(sortOrder="DESC", limit=5 ))

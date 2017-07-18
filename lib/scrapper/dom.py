@@ -1,6 +1,4 @@
-from helpers.observable import Observable
-
-class AbstractDOM(Observable):
+class AbstractDOM():
     #locked = True
 
     def __len__(self):
@@ -22,15 +20,29 @@ class AbstractDOM(Observable):
 
 class SimpleDOM(AbstractDOM):
     """
-    This is a simple implementation of DOM made just for the
-    purpose of the example.
-    DOM is stored in a simple List of tuples. Each tuple is an 3-tuple
-    that represents a node in this way:
+    Simple implementation of DOM made just for the purpose of the example.
+    DOM is stored in a simple List of nodes. Each node is a 2-tuple
+    that represents a node as follow:
     
-    ( Tag Name, Attributes, Parent )
+    ( Tag Name, Parent )
 
-    We are not interested in node content in this example so content
-    is ignored and not stored in this structure.
+
+    Tag Name is a String with the tag name, and parent is the list index
+    where the parent of element is stored.
+    So, the stored data structure of p node of the follow example:
+
+    <div>
+      <p class="example">Hello</p>
+    </p>
+
+    will be a tuple like this:
+
+    ( 'p', 0 )
+
+    assuming that div tag has the list index 0.
+    We are not interested in node content nor attributes for the purpose
+    of this example so this data is ignored and not stored in this structure.
+
     More complex implementations could made some optimization while
     the nodes are being created.
     """
