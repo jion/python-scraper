@@ -37,7 +37,7 @@ class DomBuilder(Observable, HTMLParser):
 
         actualParent =  self.actualParent.pop()
         if self.dom.getNode( actualParent )[0] != tag:
-            raise HTMLParser.Error("Closing tag is missing") # TODO: Custom error object. (ParseEror ?)
+            raise Exception("DomBuilder - Closing tag is missing") # TODO: Custom error object. (ParseEror ?)
 
         if self.actualParent[-1] == None:
             self._finishParsing()

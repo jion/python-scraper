@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 from operations import CountNumberOfElements
 
 class DomBuilderMock():
@@ -6,7 +6,7 @@ class DomBuilderMock():
     def subscribe(self, *args):
         self.lastSuscribeCall = args
 
-class CountNumberOfElementsTest(TestCase):
+class CountNumberOfElementsTest(unittest.TestCase):
     def setUp(self):
         self.instance = CountNumberOfElements()
 
@@ -32,3 +32,5 @@ class CountNumberOfElementsTest(TestCase):
 
         self.assertEqual(1, self.instance.getResults())
         
+if __name__ == "__main__":
+    unittest.main()
