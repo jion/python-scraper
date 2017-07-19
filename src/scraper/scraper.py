@@ -73,7 +73,7 @@ class Scraper(object):
         self.url = url
 
     def addOperation(self, operation):
-        operation.attachTo(self.domBuilder)
+        operation.attachTo(self.domBuilder.dom)
         self.operations.append(operation)
         return self
 

@@ -6,15 +6,21 @@ class Observable(object):
     """
     observers= {}
 
-    def subscribe(self, action, handler):
+    def subscribe(self, action, observer):
         if action not in self.observers:
             self.observers[action] = []
 
-        self.observers[action].append( handler )
+        self.observers[action].append( observer )
 
     def _trigger(self, action, eventData=None):
         if action not in self.observers:
             return # No suscribers for this event
 
-        for handler in self.observers[action]:
-            handler(eventData)
+        e = { 'action': action, 'data': eventData }
+
+        for observer in self.observers[action]:
+            observer.notify(e)
+
+class Observer(object):
+    def notify(self, eventData):
+        pass

@@ -1,6 +1,7 @@
 from collections import Counter
+from helpers.observerpattern import Observer
 
-class AbstractOperation(object):
+class AbstractOperation(Observer):
     """
     Operations are plugins that are attached to the DomBuilder in order to
     procces different kind of analysis over DOM at the time is building and
@@ -20,7 +21,7 @@ class AbstractOperation(object):
     Finally, a resultPrinter could call the getResults function in order to get
     the result of the operation and output in a useful way.
     """
-    def attachTo(self, domBuilder):
+    def attachTo(self, dom):
         pass
 
     def getResults(self):
@@ -36,18 +37,12 @@ class CountNumberOfElements(AbstractOperation):
     Result of this operation is a number indicating the total number of
     elements present in DOM.
     """
-    def __init__(self):
-        self.numberOfElements = None
 
-    def attachTo(self, domBuilder):
-        domBuilder.subscribe("ParsingFinished", self._handleParsingFinished)
-
-    def _handleParsingFinished(self, eventData):
-        dom = eventData['dom']
-        self.numberOfElements = len( dom )
+    def attachTo(self, dom):
+        self.dom = dom
 
     def getResults(self):
-        return self.numberOfElements
+        return len(self.dom)
         
 
 class ListOcurrences(AbstractOperation):
@@ -66,16 +61,22 @@ class ListOcurrences(AbstractOperation):
         self.tagsList = []
         self.result = None
 
-    def attachTo(self, domBuilder):
-        domBuilder.subscribe("NodeAdded", self._handleNodeAdded)
-        domBuilder.subscribe("ParsingFinished", self._handleParsingFinished)
+    def attachTo(self, dom):
+        self.dom = dom
+        dom.subscribe("NodeAdded", self)
 
-    def _handleNodeAdded(self, eventData):
-        tag = eventData['element'][0]
+    def notify(self, eventData):
+        if eventData['action'] == 'NodeAdded':
+            self._incrementOcurrenceCounter(eventData['data']['node'][0])
+
+    def _incrementOcurrenceCounter(self, tag):
         self.tagsList.append(tag)
 
-    def _handleParsingFinished(self, eventData):
+    def _prepareResult(self):
         self.result = Counter(self.tagsList).most_common(self.limit)
 
     def getResults(self):
+        if self.result == None:
+            self._prepareResult()
+
         return self.result

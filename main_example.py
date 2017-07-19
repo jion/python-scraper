@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.7
 
 import sys
-sys.path.append('./lib')
+sys.path.append('./src')
 
 from scraper.operations import CountNumberOfElements, ListOcurrences
 from scraper.resultprinters import ConsolePrinter

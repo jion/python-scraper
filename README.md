@@ -15,9 +15,10 @@ So, To run the example request:
 python main_example.py
 ```
 
-and to run the only test file I made (bad for me):
+and to run the only one test file that I made (bad for me):
 ```
-python lib/scraper/test_operations.py
+cd src/
+python -m unittest scraper.test_operations
 ```
 
 That is all.
@@ -31,7 +32,7 @@ and use loose coupling and high cohesion the best I could.
 Each Class has a single purpose on the system, and collaborates with the
 other classes to get the simple aim of the test.
 
-The class diagram of my Scraper is the following:
+This is a class diagram of the main classes:
 
 ![alt text](class_diagram.png "Class Diagram")
 

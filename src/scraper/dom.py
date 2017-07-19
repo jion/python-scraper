@@ -1,4 +1,6 @@
-class AbstractDOM():
+from helpers.observerpattern import Observable
+
+class AbstractDOM(Observable):
     #locked = True
 
     def __len__(self):
@@ -9,14 +11,6 @@ class AbstractDOM():
         raise NotImplementedError()
     def addContent(self, node, content):
         raise NotImplementedError()
-    # def lock(self):
-    #     if not self.locked:
-    #         self.locked = True
-    #         self._trigger( "DomLocked" )
-    # def unlock(self):
-    #     if self.locked:
-    #         self.locked = False
-    #         self._trigger( "DomUnlocked" )
 
 class SimpleDOM(AbstractDOM):
     """
@@ -53,6 +47,7 @@ class SimpleDOM(AbstractDOM):
 
     def addNode(self, node):
         self.nodes.append( node )
+        self._trigger("NodeAdded", {'node': node })
         return len(self.nodes) - 1
 
     def getNode(self, index):
