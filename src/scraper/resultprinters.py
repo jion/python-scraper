@@ -15,12 +15,17 @@ class ConsolePrinter(AbstractPrinter):
             raise Exception( "Console Printer can't print output for " + operationName )
 
     def CountNumberOfElementsPrinter( self, operation ):
-        print "The total number of elements is:", operation.getResults()
+        print "Total number of elements:", operation.getResults()
+        print ""
 
     def ListOcurrencesPrinter( self, operation ):
-        print "Ocurrences by tag: "
+        if operation.limit != None:
+            print "Top %d most frequently used tags:" % operation.limit
+        else:
+            print "Ocurrences by tag: "
         
         results = operation.getResults()
         for (tag, ocurrences) in results:
             print "{:>5}: {:d}".format(tag, ocurrences)
+        print ""
 

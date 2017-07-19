@@ -1,25 +1,16 @@
-from collections import Counter
+from collections import defaultdict
 from helpers.observerpattern import Observer
 
 class AbstractOperation(Observer):
     """
-    Operations are plugins that are attached to the DomBuilder in order to
-    procces different kind of analysis over DOM at the time is building and
-    when it finished.
+    Operations are plugins that are attached to dom events in order to
+    procces different kind of analysis over at the time it is build.
     This is the base to construct the different analysis that the Scraper
-    do on the DOM, and the good thing is that they could do his job on the
-    fly (at the same time that dom is being parsed).
+    do on the DOM.
 
     The initializer receives the specific configuration for the action,
-    and is the client who need to construct the object with this configuration
-    and pass it to the builder.
-
-    Then, the scraper will call operation attachTo method passing the domBuilder
-    in order to let the operation to attach to the needed events on the
-    build proccess.
-
-    Finally, a resultPrinter could call the getResults function in order to get
-    the result of the operation and output in a useful way.
+    and is the scraper client who need to construct the object with this
+    configuration and pass it to the builder.
     """
     def attachTo(self, dom):
         pass
@@ -59,6 +50,7 @@ class ListOcurrences(AbstractOperation):
     def __init__(self, limit=None):
         self.limit = limit
         self.tagsList = []
+        self.elementsCounter= defaultdict(int)
         self.result = None
 
     def attachTo(self, dom):
@@ -70,10 +62,28 @@ class ListOcurrences(AbstractOperation):
             self._incrementOcurrenceCounter(eventData['data']['node'][0])
 
     def _incrementOcurrenceCounter(self, tag):
-        self.tagsList.append(tag)
+        self.elementsCounter[tag] += 1
+        #self.tagsList.append(tag)
+
 
     def _prepareResult(self):
-        self.result = Counter(self.tagsList).most_common(self.limit)
+        sortedTuples = sorted(self.elementsCounter.items(), key=lambda (k, v): -v)
+        
+        # TODO: Refactor this to make it more pythonic
+        if self.limit != None:
+            newResult = []
+            lastCount = -1
+            count = 0
+            for item in sortedTuples:
+                if item[1] != lastCount:
+                    if count == self.limit:
+                        break
+                    lastCount= item[1]
+                    count += 1
+                newResult.append(item)
+            sortedTuples = newResult
+
+        self.result = sortedTuples
 
     def getResults(self):
         if self.result == None:
