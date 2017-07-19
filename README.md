@@ -1,12 +1,12 @@
 Simple Web Scraper for Python
 =============================
 
-Welcome to the more recently rocket technology on Web Scrapers ever. Take sit and enjoy. Sorry my bad english (and my bad jokes).
+Welcome to the more recently rocket technology on Web Scrapers ever. Take a seat and enjoy. Sorry my bad english (and my bad jokes).
 
 
 # How to run this example:
 
-There is not to much magic. I spend some time trying make a `config.py` file and a more pythonic
+There is not so much magic. I spend some time trying make a `config.py` file and a more pythonic
 way to simplify this step, but I didn't success (and the test is so simple to keep trying).
 
 So, To run the example request:
@@ -26,9 +26,10 @@ That is all.
 # Architecture of this example
 
 I used a OOP design, creating classes and proper abstractions in order to
-make the application the most extendable I could. Some simplifications were
-made to avoid make the code too long, but I tried to use design patterns
-and use loose coupling and high cohesion the best I could.
+make the application decoupled and extendable. Some simplifications were
+made to avoid make the code too long (I mean, I don't use classes when
+the simplicity of the object doesn't deserve it), but I tried to use
+design patterns and use loose coupling and high cohesion the best I could.
 Each Class has a single purpose on the system, and collaborates with the
 other classes to get the simple aim of the test.
 
@@ -46,12 +47,14 @@ is also provided for the scraper to the parser, and in the process this dom
 emits events that are captured for several implementations of the Operation
 class (attached to the DOM also by this Scrapper) and used properly to calculate
 some analysis on the fly while the DOM is beign constructing.
+* Note: My parser implementation was called domBuilder now.
 
 The Scraper was built as a library, that you can use inside your own programs
 or write a CLI application that takes orders from the command line.
 
 For this example, I create a `main_example.py` python script on the root that
-prepares and use the library to execute only the request required in the test.
+prepares and use the library to execute only the request that was required in
+the test statement.
 
 ## Usage
 The library exposes a builder class (Scraper) thar receives an URL and a list
@@ -126,20 +129,22 @@ having code working).
 
 # Final Considerations and conclusion
 Apart from the assumptions described above, I tried to make the code the most decoupled I could.
-In some parts I decided to do it in a more "hardcore" fashion for the sake of the example,
+In some parts I decided to do it in a more "hardcore" fashion for the simplicity of the example,
 but I tried to explain in comments when that was the case.
-Also, I tried to document all classes (it was not so as I would wish with methods) and
-did some investigation to refactor in more pythonic ways some parts of the code.
+Also, I tried to document all classes (less so with methods) and I
+did some investigation to refactor some part of the code in a more pythonic way.
 
 Also I left with some unresolved questions like a proper way to place and execute the test
 (my test case file is just in the same path where the tested module is stored, and I didn't
-find another way to discover/run the test automatically more than just execute manually the file
-with `python testfile.py`).
+find another way to discover/run the test automatically more than just execute manually the file).
 
 As self-critisism, I tried to do this to-much OOP-style and force some patterns in some
 places that maybe it adds unnecesary complecity for the purpose of this example.
 This takes me a little bit more time refactoring, for a problem that I almost resolve in a
 sandbox in 15 min (I left the sandbox file just in case you have curiosity)
+Another thing I'm not proud is the algorithm to count the top 5 and the silly way in it is
+printed. I would wish to group tags with the same ocurrences but the way in I modeled the
+printer or the data structures I choose makes this difficult.
 Finally, a better error handler is missing. I left that to do after all the "most important"
 things and finally I haven't enough time to make that. I think unit testing is an important
 tool also to discover missing error handling of some parts.
